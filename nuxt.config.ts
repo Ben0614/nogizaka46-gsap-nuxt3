@@ -18,6 +18,8 @@ export default defineNuxtConfig({
 
   css: ['@/assets/scss/style.scss'],
 
+  // 開啟後在頁面上會有Nuxt Devtools 面板輔助
+  // @nuxt/devtools
   devtools: { enabled: false },
 
   typescript: {

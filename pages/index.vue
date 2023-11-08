@@ -2,7 +2,7 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-
+import Lenis from '@studio-freight/lenis'
 import { useDisplay } from 'vuetify'
 import { ICardData } from '@/model/index'
 import BtnNormal from '@/components/base/BtnNormal.vue'
@@ -62,9 +62,27 @@ const ctx = ref()
 // gsap斷點用
 const mm = gsap.matchMedia()
 
-// 清除gsap
+// lenis設定
+const lenis = ref()
+
+if (process.client) {
+  lenis.value = new Lenis()
+  lenis.value.on('scroll', ScrollTrigger.update)
+
+  gsap.ticker.add((time) => {
+    lenis.value.raf(time * 1000)
+  })
+
+  gsap.ticker.lagSmoothing(0)
+}
+
+// 清除
 onUnmounted(() => {
+  // gsap
   ctx.value.revert() // <- Easy Cleanup!
+  // lenis (要停止和清除 否則換頁時會無法回到頂部)
+  lenis.value.stop()
+  lenis.value.destroy()
 })
 
 onMounted(() => {
@@ -100,7 +118,7 @@ onMounted(() => {
           start: 'top +=50%', // (物件開始位置, 卷軸(變化)開始位置) top center bottom px
           end: '+=50%', // (物件結束位置, 卷軸(變化)結束位置)
           pin: false, // 物件執行完動畫會跟著卷軸走，類似 fixed-top
-          scrub: true, // 物件動畫根據卷軸捲動程度跑
+          scrub: true, // 物件動畫根據卷軸捲動程度跑 (可用數字或布林)
           // markers: true, // 顯示標記
         },
       })
@@ -517,7 +535,16 @@ export default {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.v-field{
+  cursor: pointer;
+  &:hover{
+    .v-field__outline {
+      outline: 1px solid blue;
+    }
+  }
+
+}
 .video-bg,
 .img-bg {
   position: absolute;

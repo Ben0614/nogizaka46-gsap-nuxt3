@@ -17,6 +17,9 @@ const goToPage = (paegName: string) => {
       <h3 :style="{ cursor: 'pointer' }" class="text-h5 ml-10 text-white" @click="goToPage('ohitorisamaTengoku')">
         33rd
       </h3>
+      <h3 :style="{ cursor: 'pointer' }" class="text-h5 ml-10 text-white" @click="goToPage('member')">
+        Member
+      </h3>
     </v-container>
   </v-footer>
 </template>

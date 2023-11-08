@@ -3,6 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { useDisplay } from 'vuetify'
+import Lenis from '@studio-freight/lenis'
 import { IPic } from '@/model/ohitorisamaTengoku'
 import picOne from '@/assets/images/nogizaka46/33rd/1.jpg'
 import picTwo from '@/assets/images/nogizaka46/33rd/2.jpg'
@@ -89,9 +90,27 @@ const ctx = ref()
 // gsap斷點用
 const mm = gsap.matchMedia()
 
-// 清除gsap
+// lenis設定
+const lenis = ref()
+
+if (process.client) {
+  lenis.value = new Lenis()
+  lenis.value.on('scroll', ScrollTrigger.update)
+
+  gsap.ticker.add((time) => {
+    lenis.value.raf(time * 1000)
+  })
+
+  gsap.ticker.lagSmoothing(0)
+}
+
+// 清除
 onUnmounted(() => {
+  // gsap
   ctx.value.revert() // <- Easy Cleanup!
+  // lenis (要停止和清除 否則換頁時會無法回到頂部)
+  lenis.value.stop()
+  lenis.value.destroy()
 })
 
 onMounted(() => {
@@ -120,7 +139,7 @@ onMounted(() => {
             scrub: 1,
             // markers: true,
           },
-          transform: 'rotateX(0)',
+          rotationX: 0,
         })
       })
       // 線條
@@ -180,7 +199,7 @@ onMounted(() => {
           // },
         },
         position: 'static',
-        transform: 'translateY(65%)',
+        translateY: '65%',
       })
       // 左右的fixed文字
       const handleCompany = gsap

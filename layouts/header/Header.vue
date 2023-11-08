@@ -2,9 +2,17 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
+import { useDisplay } from 'vuetify'
 import logo from '@/assets/images/nogizaka46/Nogizaka46_logo_long.png'
+import mobileLogo from '@/assets/images/nogizaka46/Nogizaka46_logo.png'
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
+
+// 這些斷點是給template用  (gsap要用gsap自己的斷點)
+const { name } = useDisplay()
+const isMobile = computed(() => {
+  return ['xs', 'sm'].includes(name.value)
+})
 
 const header = ref<HTMLDivElement | null>(null)
 const router = useRouter()
@@ -37,13 +45,33 @@ onMounted(() => {
   <div ref="header" class="header bg-white">
     <v-container class="d-flex align-center">
       <div>
-        <img :style="{ cursor: 'pointer' }" width="200px" :src="logo" contain @click="goToPage('index')">
+        <!-- 用v-if無法顯示 要用v-show -->
+        <!-- 或者是用v-img -->
+        <img
+          v-show="!isMobile"
+          :style="{ cursor: 'pointer' }"
+          width="200px"
+          :src="logo"
+          contain
+          @click="goToPage('index')"
+        >
+        <img
+          v-show="isMobile"
+          :style="{ cursor: 'pointer' }"
+          width="40px"
+          :src="mobileLogo"
+          contain
+          @click="goToPage('index')"
+        >
       </div>
       <h3 :style="{ cursor: 'pointer' }" class="ml-10 text-purple text-h6 font-weight-bold" @click="goToPage('joinUs')">
         Join us
       </h3>
       <h3 :style="{ cursor: 'pointer' }" class="ml-10 text-purple text-h6 font-weight-bold" @click="goToPage('ohitorisamaTengoku')">
         33rd
+      </h3>
+      <h3 :style="{ cursor: 'pointer' }" class="ml-10 text-purple text-h6 font-weight-bold" @click="goToPage('member')">
+        Member
       </h3>
     </v-container>
   </div>
