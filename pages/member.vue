@@ -7,14 +7,17 @@ import Lenis from '@studio-freight/lenis'
 import { memberInfoList } from '@/data/member'
 import { IMemberInfoList } from '@/model/member'
 import leftImg from '@/assets/images/nogizaka46/member/left_banner_bg.jpg'
+import leftImg34th from '@/assets/images/nogizaka46/member/left_banner_bg_34th.jpg'
 import rightImg from '@/assets/images/nogizaka46/member/right_banner_bg.jpg'
 import banner46 from '@/assets/images/nogizaka46/member/banner46.png'
 import daughter from '@/assets/images/nogizaka46/member/daughter.png'
 
 const leftBg = computed(() => {
   return {
-    backgroundImage: `url(${leftImg})`,
-    backgroundSize: 'cover'
+    backgroundImage: `url(${leftImg34th})`,
+    // backgroundImage: `url(${leftImg})`,
+    backgroundSize: 'cover',
+    'background-position': 'center'
   }
 })
 const rightBg = computed(() => {
@@ -88,9 +91,15 @@ onMounted(() => {
         duration: 1,
         delay: 0.5,
         onComplete: function () {
-          gsap.to('.right img, .right h2', {
+          gsap.to('.right img', {
             opacity: 1,
             duration: 2,
+            onComplete: function () {
+              gsap.to('.right h2, .right h3', {
+                opacity: 1,
+                duration: 2,
+              })
+            }
           })
           gsap.to('.daughter', {
             right: 0,
@@ -202,7 +211,9 @@ onMounted(() => {
       fiveInfos.forEach((info, index) => {
         gsap.set(info, {
           translateY: '100%',
-          scale: 0.3
+          scale: 0.3,
+          borderRadius: '50%',
+          overflow: 'hidden'
         })
 
         gsap.to(info, {
@@ -216,6 +227,8 @@ onMounted(() => {
           rotationZ: index % 2 === 0 ? 1080 : -1080,
           scale: 1,
           duration: 0.7,
+          borderRadius: 0,
+          overflow: 'none'
         })
       })
     })
@@ -239,7 +252,10 @@ export default {
       <div class="right" :style="rightBg">
         <img :src="banner46">
         <div>
-          <h2>今が思い出になるまで</h2>
+          <h3>乃木坂46 34th Single</h3>
+          <h2>「Monopoly」</h2>
+          <h3>2023.12.06 RELEASE</h3>
+          <!-- <h2>今が思い出になるまで</h2> -->
         </div>
       </div>
       <div class="daughter">
@@ -248,7 +264,7 @@ export default {
     </div>
     <div class="member-area">
       <v-container>
-        <h2 class="text-purple">
+        <h2>
           Member
         </h2>
         <div class="three-area">
@@ -330,25 +346,39 @@ export default {
       width: 100%;
     }
 
-    h2{
+    h2,h3{
       color: #e0ae6b;
       text-align: center;
-      font-size: 25px;
+      font-size: 30px;
       letter-spacing: 10px;
       font-weight: 400;
-      margin: 20px 0 0 0;
+      margin: 15px 0 0 0;
 
       @media screen and (max-width: '959px') {
-        font-size: 25px;
+        font-size: 30px;
         margin: 20px 0 0 0;
       }
       @media screen and (min-width: '1281px') {
-        font-size: 40px;
-        margin: 50px 0 0 0;
+        font-size: 50px;
+        margin: 40px 0 0 0;
+      }
+    }
+    h3{
+      font-size: 18px;
+      letter-spacing: 10px;
+      margin: 15px 0 0 0;
+
+      @media screen and (max-width: '959px') {
+        font-size: 18px;
+        margin: 20px 0 0 0;
+      }
+      @media screen and (min-width: '1281px') {
+        font-size: 34px;
+        margin: 40px 0 0 0;
       }
     }
 
-    h2,img{
+    h2,h3,img{
       opacity: 0
     }
   }
@@ -372,6 +402,8 @@ export default {
   h2{
     font-size: 50px;
     text-align: center;
+    color: #912ed6;
+    font-family: 'Cormorant Garamond';
   }
   .three-area,
   .four-area,

@@ -41,6 +41,9 @@ export default defineNuxtConfig({
       'Noto Sans TC': {
         wght: [100, 300, 400, 500, 700, 900],
       },
+      'Cormorant Garamond': {
+        wght: [100, 300, 400, 500, 700, 900],
+      },
     },
     subsets: ['latin'],
     display: 'swap',
