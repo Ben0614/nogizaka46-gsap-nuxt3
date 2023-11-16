@@ -257,7 +257,6 @@ export default {
 </script>
 
 <template>
-  <!-- <div v-if="isServer" :style="{ height: '200vh' }" class="bg-black" /> -->
   <div v-if="!isServer" class="wrap text-white">
     <!--
       server時 避免讓用戶看到主要的畫面 所以先佔畫面

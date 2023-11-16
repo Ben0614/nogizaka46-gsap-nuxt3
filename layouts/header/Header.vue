@@ -20,23 +20,46 @@ const goToPage = (paegName:string) => {
   router.push({ name: paegName })
 }
 
-onMounted(() => {
-  // 不加progress 一開始header不會顯示
-  const showAnim = gsap
-    .from(header.value, {
-      yPercent: -100,
-      paused: true,
-      duration: 0.2,
-    })
-    .progress(1)
+const ctx = ref()
+// gsap斷點用
+const mm = gsap.matchMedia()
 
-  ScrollTrigger.create({
-    start: '80 top',
-    end: 'bottom',
-    // markers: true,
-    onUpdate: (self) => {
-      self.direction === -1 ? showAnim.play() : showAnim.reverse()
-    },
+onMounted(() => {
+  ctx.value = gsap.context(() => {
+    mm.add({
+      isMobile: '(max-width: 959px)',
+      isSmallDesktop: '(min-width: 960px) and (max-width: 1280px)',
+      isBigDesktop: '(min-width: 1281px)',
+    }, (context) => {
+      // 解構出來
+      const { isMobile, isSmallDesktop, isBigDesktop } = context.conditions ?? {}
+
+      gsap.set('.is-mobile', {
+        display: isMobile ? '' : 'none',
+      })
+
+      gsap.set('.is-desktop', {
+        display: !isMobile ? '' : 'none'
+      })
+
+      // 不加progress 一開始header不會顯示
+      const showAnim = gsap
+        .from(header.value, {
+          yPercent: -100,
+          paused: true,
+          duration: 0.2,
+        })
+        .progress(1)
+
+      ScrollTrigger.create({
+        start: '80 top',
+        end: 'bottom',
+        // markers: true,
+        onUpdate: (self) => {
+          self.direction === -1 ? showAnim.play() : showAnim.reverse()
+        },
+      })
+    })
   })
 })
 </script>
@@ -45,19 +68,26 @@ onMounted(() => {
   <div ref="header" class="header bg-white">
     <v-container class="d-flex align-center">
       <div>
-        <!-- 用v-if無法顯示 要用v-show -->
-        <!-- 或者是用v-img -->
+        <!--
+          用v-if無法顯示img
+
+          解法:
+          1.v-show
+          2.v-img
+          3.gsap.set (現在用的)
+        -->
+        <!-- inlineStyle先設定display: 'none' 否則在server時會同時出現手機和桌機的logo -->
         <img
-          v-show="!isMobile"
-          :style="{ cursor: 'pointer' }"
+          class="is-desktop"
+          :style="{ display: 'none',cursor: 'pointer' }"
           width="200px"
           :src="logo"
           contain
           @click="goToPage('index')"
         >
         <img
-          v-show="isMobile"
-          :style="{ cursor: 'pointer' }"
+          class="is-mobile"
+          :style="{ display: 'none',cursor: 'pointer' }"
           width="40px"
           :src="mobileLogo"
           contain

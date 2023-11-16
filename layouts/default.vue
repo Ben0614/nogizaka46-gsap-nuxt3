@@ -2,12 +2,42 @@
 import Header from './header/Header.vue'
 import Footer from './footer/Footer.vue'
 
+/*
+注意:
+gsap和vuetify之間有些情況會產生bug。
+
+情境一 (vuetify ssr)
+vuetify開啟ssr會讓gsap滾動的start end出現bug。
+
+解決方法:不要開啟vuetify的ssr。
+
+情境二 (vuetify ssr2)
+vuetify開啟ssr，然後使用useDisplay來作為dom的"v-if斷點"使用，這會導致gsap抓不到這個dom，無法發生變化。
+
+解決方法:
+用gsap.set來設定，先給要做v-if斷點處理的dom加上mobile或desktop的class，然後再跑迴圈用gsap.set設定display。
+
+情境三 (css)
+因為vuetify的class css是important，所以使用gsap時會無法改變，要特別注意。
+
+解決方法:要變化的css不要用vuetify的class設定，用gsap.set設定。
+
+總結:
+1.不要開啟vuetify的ssr
+2.用gsap的時候，要設定css要特別小心，盡量都用gsap.set處理，並且gsap.set要設定在上方。
+*/
+
 // 如果從其他頁非頂部跳轉 到新頁面的scrollY會跟前一頁一樣
 // 這會造成scrollTrigger start end產生問題
 // 所以要跳回頁面的頂部 (這裡主要是處理F5重新整理時的)
 const nuxtApp = useNuxtApp()
 nuxtApp.hook('page:finish', () => {
   window.scrollTo(0, 0)
+})
+
+// server時
+const isServer = computed(() => {
+  return !process.client
 })
 
 // 進度條
@@ -40,21 +70,14 @@ onMounted(() => {
     <v-app :theme="'BLUE_THEME'">
       <!-- 前台樣式 -->
       <Header />
-      <!-- <client-only> -->
       <v-main :style="{marginTop:'80px'}">
-        <!-- fluid -->
-        <!-- <v-container class="pb-sm-15 pb-10"> -->
         <div>
           <slot />
         </div>
-        <!-- </v-container> -->
       </v-main>
 
-      <!-- 不放到client-only F5重整會出現2個footer -->
-      <client-only>
-        <Footer />
-      </client-only>
-      <!-- </client-only> -->
+      <!-- 不放到client-only F5重整有可能出現2個footer -->
+      <Footer v-if="!isServer" />
       <!-- 滾動進度條 -->
     </v-app>
   </v-locale-provider>

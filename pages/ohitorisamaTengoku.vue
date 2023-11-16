@@ -128,6 +128,19 @@ onMounted(() => {
         height: isMobile || isSmallDesktop ? '750px' : '1350px',
       })
 
+      // 預設那些dom是mobile顯示 哪些是desktop顯示
+      // gsap.set 除非有要做個別設定 否則不用gsap.utils.toArray
+      gsap.set('.is-mobile', {
+        display: isMobile ? '' : 'none',
+      })
+      gsap.set('.is-desktop', {
+        display: !isMobile ? '' : 'none'
+      })
+      gsap.set('.is-mobile-flex', {
+        display: isMobile ? 'flex' : 'none',
+        flexWrap: 'wrap'
+      })
+
       // 文字rotate
       const rxs: HTMLElement[] = gsap.utils.toArray('.rx90')
       rxs.forEach((item, index) => {
@@ -447,17 +460,17 @@ export default {
       <div class="d-flex" :class="isMobile ? 'flex-column' : 'justify-space-around'">
         <!-- flex底下的元素好像可以直接用index 不用relative -->
         <div :style="{zIndex:'2'}" :class="isSmallDesktop ? 'd-flex' : ''">
-          <div v-if="isMobile" class="d-flex flex-wrap">
+          <div class="is-mobile-flex">
             <h4 v-for="(pic,index) in pics" :key="index" class="rx90 picList" :class="'text-h6 ml-4'" @mouseenter="changePic(pic)">
               {{ pic.number }}
             </h4>
           </div>
-          <div v-if="!isMobile">
+          <div class="is-desktop">
             <h4 v-for="(pic,index) in pics.slice(0,5)" :key="index" class="rx90 picList" :class="isSmallDesktop ? 'text-h5' : 'text-h4'" @mouseenter="changePic(pic)">
               {{ pic.number }}
             </h4>
           </div>
-          <div v-if="!isMobile" :class="isSmallDesktop ? 'ml-10' : ''">
+          <div class="is-desktop" :class="isSmallDesktop ? 'ml-10' : ''">
             <h4 v-for="(pic,index) in pics.slice(5)" :key="index" class="rx90 picList" :class="isSmallDesktop ? 'text-h5' : 'text-h4'" @mouseenter="changePic(pic)">
               {{ pic.number }}
             </h4>
